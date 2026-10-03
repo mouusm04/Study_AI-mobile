@@ -1,13 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:prepexami/src/app.dart';
+import 'package:prepexami/src/config.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() {
-  testWidgets('shows setup guidance without runtime configuration', (
+  setUpAll(() async {
+    SharedPreferences.setMockInitialValues({});
+    await Supabase.initialize(
+      url: AppConfig.supabaseUrl,
+      anonKey: AppConfig.supabaseAnonKey,
+    );
+  });
+  testWidgets('starts with the configured production landing page', (
     tester,
   ) async {
     await tester.pumpWidget(const PrepExamiApp());
-    expect(find.text('Connect PrepExami'), findsOneWidget);
+    expect(
+      find.text('Master your exams\nthrough pure practice.'),
+      findsOneWidget,
+    );
     expect(find.textContaining('SUPABASE_URL'), findsOneWidget);
   });
 
